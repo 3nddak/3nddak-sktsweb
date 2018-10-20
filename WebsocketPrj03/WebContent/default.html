@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Chatroom</title>
+
+</head>
+<body>
+<form>
+      <textarea id="messages" readonly="readonly" rows="10" cols="50"></textarea><br/>
+      <input id="message" type="text" size="50"/>
+      <input type="button"  value="send" onclick="send();"/>
+   </form>
+   <script type="text/javascript">
+    var websocket = new WebSocket('ws://localhost:8080/WebsocketPrj03/chatserverEndpoint');
+     
+    websocket.onmessage = function processMessage(chatMessage){
+    	  var json = JSON.parse(chatMessage.data);
+    	  document.getElementById('messages').value += json.name +': '+json.message + "\n";
+
+     }
+    function send() {
+   	 var message = document.getElementById('message');
+       	 websocket.send(JSON.stringify({'message' : message.value}));
+       	 message.value="";
+	}
+    
+    window.onbeforeunload = function(){
+   	 websocket.onclose = function(){};
+   	 websocket.close();
+   	 };
+    
+   </script>
+</body>
+</html>
