@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WebSocket 01</title>
+</head>
+<body>
+
+<form>
+      <input id="textMessage" type="text"/>
+      <input onclick="sendMessage();"  value="send Message" type="button"/>
+   </form>
+   <br/><textarea id="messagesTextArea" rows="10" cols="50"></textarea>
+   <script type="text/javascript">
+    var websocket = new WebSocket("ws://localhost:8080/WebsocketPrj01/serverendpointdemo");
+    var messagesTextArea = document.getElementById("messagesTextArea");
+     websocket.onopen = function (message){processOpen(message);};
+     websocket.onclode = function (message){processClose(message);};
+     websocket.onerror = function (message){processError(message);};
+     websocket.onmessage = function (message){processMessage(message);};
+     
+     function processOpen(message) {
+    	 messagesTextArea.value +="Serveur Connect..."+"\n";
+	}
+     
+     function processClose(message) {
+    	 websocket.send("le client est deconnecté...")
+    	 messagesTextArea.value +="Serveur deconnecter..."+"\n";
+    	 
+	}
+     
+     function processError(message) {
+    	 messagesTextArea.value +="Error ...\n";
+    	 
+	}
+     
+
+     function processMessage(message) {
+    	 messagesTextArea.value +="reçu du serveur..."+message.data+"\n";
+    	 
+	}
+     
+     function sendMessage() {
+    	 if (textMessage.value!="close"){
+    		 
+        	 websocket.send(textMessage.value);
+        	 messagesTextArea.value +="Envoyé au serveur...   "+textMessage.value+"\n";
+        	 textMessage.value="";
+    		 } else websocket.close();
+
+	}
+    
+   </script>
+   
+
+</body>
+</html>
